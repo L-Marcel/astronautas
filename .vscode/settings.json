@@ -1,7 +1,22 @@
 {
+    "C_Cpp.default.compilerPath": "C:\\msys64\\ucrt64\\bin\\g++.exe",
     "files.associations": {
-        "new": "cpp",
         "iostream": "cpp",
+        "new": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "istream": "cpp",
+        "tuple": "cpp",
+        "*.tcc": "cpp",
+        "memory": "cpp",
+        "functional": "cpp",
+        "utility": "cpp",
+        "memory_resource": "cpp",
         "ostream": "cpp"
     }
 }
