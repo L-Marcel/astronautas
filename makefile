@@ -1,7 +1,9 @@
 BUILD=build/main.o build/entities.o build/list.o build/utils.o
 FLAGS=-g -Wall -pedantic -Isrc/includes
 
-run: ${BUILD}
+run:
+	./main
+dev: ${BUILD}
 	g++ -o main ${BUILD}
 build/main.o: src/main.cpp
 	g++ ${FLAGS} -c src/main.cpp -o build/main.o

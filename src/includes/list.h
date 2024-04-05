@@ -1,5 +1,6 @@
 #pragma once
 #include "utils.h"
+#include <functional>
 
 template <typename T> class List {
     private:
@@ -9,16 +10,26 @@ template <typename T> class List {
         List();
         
         /// @brief Add an item in the current list
-        /// @param item item's pointer
+        /// @param item Item's pointer
         void add(T* item);
 
         /// @brief Gets an item by index
-        /// @param index item's index
-        /// @return item's pointer
+        /// @param index Item's index
+        /// @return Item's pointer
         T* get(unsigned int index);
 
+        /// @brief Find an astronaut if exists
+        /// @param search Function to search
+        /// @return Astronaut's pointer if exists, NULL otherwise
+        T* find(function<bool(T*)> search);
+
+        /// @brief Check if an astronaut exists
+        /// @param compare Funciton to compare
+        /// @return True if exists, false otherwise
+        bool exists(function<bool(T*)> compare);
+
         /// @brief Remove an item in the current list
-        /// @param index item's index
+        /// @param index Item's index
         void remove(unsigned int index);
 
         /// @return Amount of items in list
