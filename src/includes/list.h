@@ -13,6 +13,10 @@ template <typename T> class List {
         /// @param item Item's pointer
         void add(T* item);
 
+        /// @brief Orderer the list
+        /// @param compare The function used to compare the items
+        void sort(function<bool(T*, T*)> compare);
+
         /// @brief Gets an item by index
         /// @param index Item's index
         /// @return Item's pointer

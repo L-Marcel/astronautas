@@ -14,7 +14,12 @@ template <typename T> void List<T>::add(T* item) {
 
     delete[] this->items;
     items[this->qtd - 1] = item;
+
     this->items = items;
+};
+
+template <typename T> inline void List<T>::sort(function<bool(T*, T*)> compare) {
+   std::sort(this->items, this->items + this->qtd, compare);
 };
 
 template <typename T> T* List<T>::get(unsigned int index) {
