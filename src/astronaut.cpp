@@ -16,7 +16,7 @@ Astronaut::Astronaut(string name, string cpf, Gener gener) {
 };
 
 long long unsigned int Astronaut::getMaxNameWidth(List<Astronaut>* database) {
-    long long unsigned int maxNameWidth = 0;
+    long long unsigned int maxNameWidth = 4;
 
     if(database != NULL) {
         for(unsigned int i = 0; i < database->getAmount(); i++) {
@@ -29,6 +29,9 @@ long long unsigned int Astronaut::getMaxNameWidth(List<Astronaut>* database) {
 };
 
 bool Astronaut::compare(Astronaut* a, Astronaut* b) {
+    if(a->alive != b->alive) return a->alive > b->alive;
+    if(a->available != b->available) return a->available > b->available;
+    
     bool name = false;
 
     string na = a->getName();
@@ -48,10 +51,7 @@ bool Astronaut::compare(Astronaut* a, Astronaut* b) {
         };
     };
 
-    bool availability = a->available >= b->available;
-    bool death = a->alive >= b->alive; 
-
-    return name && availability && death;
+    return name;
 };
 
 Astronaut* Astronaut::form(List<Astronaut>* database) {
@@ -118,7 +118,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
         cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? " << cpf << endl;
-        cout << "Com qual gênero o astronauta se identifica? " << endl << endl;
+        cout << "Com qual genero o astronauta se identifica? " << endl << endl;
         
         cout << "[M] Masculino" << endl;
         cout << "[F] Feminino" << endl;
@@ -127,7 +127,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
         cout << "Resposta: ";
 
         generChar = tolower(getchar());
-    } while(generChar != 'm' || generChar != 'f' || generChar != 'o');
+    } while(generChar != 'm' && generChar != 'f' && generChar != 'o');
 
     switch (generChar) {
         case 'm':
@@ -148,7 +148,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
         cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? " << cpf << endl;
-        cout << "Com qual gênero o astronauta se identifica? " << generRef << endl << endl;
+        cout << "Com qual genero o astronauta se identifica? " << generRef << endl << endl;
         cout << "Confirmar cadastro [Y/n]? ";
         confirm = tolower(getchar());
     } while(confirm != 'y' && confirm != 'n');
@@ -173,33 +173,49 @@ unsigned int Astronaut::countDeaths(List<Astronaut>* database) {
     return deaths;
 };
 
+unsigned int Astronaut::countAlives(List<Astronaut>* database) {
+    unsigned int alives = 0;
+
+    for(unsigned int i = 0; i < database->getAmount(); i++) {
+        if(!database->get(i)->alive) break;
+        alives++;
+    };
+
+    return alives;
+};
+
 Astronaut* Astronaut::list(
     List<Astronaut>* database, string title, 
-    bool onlyAlive, bool catchAstronaut
+    AstronautFilter filter, bool catchAstronaut
 ) {
     long long unsigned int maxNameWidth = Astronaut::getMaxNameWidth(database);
     unsigned int page = 0;
     unsigned int perPage = 8;
 
-    unsigned int amount = database->getAmount() - (onlyAlive? Astronaut::countDeaths(database):0);
+    unsigned int alivesGap = (filter == DEAD? Astronaut::countAlives(database):0);
+    unsigned int deathsGap = (filter == ALIVE? Astronaut::countDeaths(database):0);
+    unsigned int amount =  database->getAmount() - deathsGap - alivesGap;
+
     unsigned int maxPage = amount / perPage;
     if((amount % perPage == 0) && maxPage > 0) maxPage--;
 
-    unsigned int end = min(amount, (page + 1) * perPage);
-    unsigned int start = page * perPage;
+    unsigned int end = 0;
+    unsigned int start = 0;
 
     do {
-        end = min(amount, (page + 1) * perPage);
-        start = page * perPage;
+        end = min(amount, ((page + 1) * perPage));
+        start = (page * perPage);
 
         clear();
         
         if(amount > 0) {
             cout << title << " [" << page + 1 << "/" << maxPage + 1 << "]" << endl << endl;
-        
+
+            cout << "[#]  " << setw(maxNameWidth + 2) << left << "NOME" << setw(6) << "VOOS" << setw(15) << "STATUS" << endl;
             for(unsigned int i = start; i < end; i++) {
-                cout << "[" << i - (page * perPage) << "] ";
-                database->get(i)->print(maxNameWidth); 
+                cout << "[" << i - (page * perPage) << "]  ";
+                database->get(i + alivesGap)->print(maxNameWidth);
+
             };
 
             cout << endl;
@@ -215,7 +231,7 @@ Astronaut* Astronaut::list(
 
         if(key == BACKSPACE) return NULL;
         else if(key >= '0' && key < '0' + int(end - start) && catchAstronaut) {
-            unsigned int index = (key - '0') + (page * perPage);
+            unsigned int index = (key - '0') + (page * perPage) + alivesGap;
             return database->get(index);
         } else if(key == SPECIAL_KEY) {
             int specialKey = getch();
@@ -227,7 +243,6 @@ Astronaut* Astronaut::list(
     return NULL;
 };
 
-
 string Astronaut::getName() {
     return this->name;
 };
@@ -236,7 +251,7 @@ void Astronaut::kill() {
     this->alive = false;
 };
 
-void Astronaut::print(long long unsigned int maxNameWidth, bool full) {
+void Astronaut::print(long long unsigned int maxNameWidth) {
     string availability = "[";
     availability.append(
         this->alive? 
@@ -247,6 +262,5 @@ void Astronaut::print(long long unsigned int maxNameWidth, bool full) {
             ))
     );
 
-    if(!full) cout << setw(maxNameWidth + 2) << left << name << setw(15) << availability << endl;
-    else cout << setw(maxNameWidth + 2) << left << name << setw(16) << cpf << setw(15) << availability << endl;
-};
+    cout << setw(maxNameWidth + 2) << left << name << setw(6) << expeditions << setw(15) << availability << endl;
+}; 

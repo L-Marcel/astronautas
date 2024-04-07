@@ -12,10 +12,17 @@ enum Gener {
 /// @return gener string
 string generToString(Gener gener);
 
+enum AstronautFilter {
+    ALIVE,
+    DEAD,
+    ALL
+};
+
 class Astronaut {
     private:
         
         bool alive = true;
+        unsigned int expeditions = 0;
         string name;
         string cpf;
         Gener gener;
@@ -46,13 +53,18 @@ class Astronaut {
         /// @return The number of deadths
         static unsigned int countDeaths(List<Astronaut>* database);
 
+        /// @brief Count the number of alive astronauts
+        /// @param database Astronaut database
+        /// @return The number of alives
+        static unsigned int countAlives(List<Astronaut>* database);
+
         /// @brief Show the list of astronauts
         /// @param database Astronaut database
         /// @param title List's title
-        /// @param onlyAlive True if you want to show only alive astronauts, false otherwise
+        /// @param filter Filter applied
         /// @param catchAstronaut True if you want to return the selected astronaut
         /// @return Astronaut's pointer or NULL
-        static Astronaut* list(List<Astronaut>* database, string title, bool onlyAlive, bool catchAstronaut);
+        static Astronaut* list(List<Astronaut>* database, string title, AstronautFilter filter, bool catchAstronaut);
 
         /// @return Astronaut's name
         string getName();
@@ -62,6 +74,5 @@ class Astronaut {
 
         /// @brief Print astronaut's data
         /// @param maxNameWidth Max lenght of an astronaut's name
-        /// @param true If you want to print all data, default is false
-        void print(long long unsigned int maxNameWidth, bool full = false);
+        void print(long long unsigned int maxNameWidth);
 };
