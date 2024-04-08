@@ -34,7 +34,37 @@ string capitalize(string text) {
 };
 
 string toCpf(string text) {
-    return text.substr(0,3) + "." + text.substr(3,3) + "." + text.substr(6,3) + "-" + text.substr(9,2);
+    string result = "";
+
+    long long unsigned int gap = 0;
+    short int points = 2;
+    bool skip = false;
+    for(long long unsigned int i = 0; i < text.length(); i++) {
+        if(result.length() == 14) break;
+
+        char divisor = points > 0? '.':'-';
+
+        if(i % 3 == gap && i > 0 && !skip) {
+            if(text[i] != divisor) {
+                points--;
+                result += divisor;
+                i--;
+                skip = true;
+                continue;
+            } else {
+                points--;
+                skip = true;
+                gap++;
+                result += text[i];
+                continue;
+            };
+        };
+       
+        skip = false;
+        result += text[i];;
+    };
+
+    return result;
 };
 
 bool isCpf(string text) {

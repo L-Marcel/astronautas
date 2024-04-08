@@ -18,6 +18,12 @@ enum AstronautFilter {
     ALL
 };
 
+enum AstronautSearch {
+    NONE,
+    NAME,
+    CPF
+};
+
 class Astronaut {
     private:
         
@@ -31,6 +37,22 @@ class Astronaut {
         /// @param database Astronaut database
         /// @return Max lenght of an astronaut's name
         static long long unsigned int getMaxNameWidth(List<Astronaut>* database);
+
+        /// @brief Show the list of astronauts
+        /// @param database Astronaut database
+        /// @param title List's title
+        /// @param filter Filter applied
+        /// @param search Search mode
+        /// @param searchParam Param used to search (only to show)
+        /// @param catchAstronaut True if you want to return the selected astronaut
+        /// @param baseDatabase Astronaut database without filter
+        /// @return Astronaut's pointer or NULL
+        static Astronaut* search(
+            List<Astronaut>* database, string title, 
+            AstronautFilter filter, AstronautSearch search = NONE,
+            string searchParam = "", bool catchAstronaut = true,
+            List<Astronaut>* baseDatabase = NULL
+        );
     public:
         /// [LEMBRETE] Se lembrar de mover para privado depois
         bool available = true;
@@ -64,10 +86,17 @@ class Astronaut {
         /// @param filter Filter applied
         /// @param catchAstronaut True if you want to return the selected astronaut
         /// @return Astronaut's pointer or NULL
-        static Astronaut* list(List<Astronaut>* database, string title, AstronautFilter filter, bool catchAstronaut);
+        static Astronaut* list(
+            List<Astronaut>* database, string title, 
+            AstronautFilter filter,
+            bool catchAstronaut = true
+        );
 
         /// @return Astronaut's name
         string getName();
+
+        /// @return Astronaut's cpf
+        string getCpf();
 
         /// @brief Kill the astronaut
         void kill();

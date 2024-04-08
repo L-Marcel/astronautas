@@ -19,7 +19,19 @@ template <typename T> void List<T>::add(T* item) {
 };
 
 template <typename T> inline void List<T>::sort(function<bool(T*, T*)> compare) {
-   std::sort(this->items, this->items + this->qtd, compare);
+    std::sort(this->items, this->items + this->qtd, compare);
+};
+
+template <typename T> inline List<T> List<T>::filter(function<bool(T*)> condition) {
+    List<T> filteredList;
+
+    for(unsigned int i = 0; i < this->qtd; i++) {
+        T* item = this->items[i];
+
+        if(condition(item)) filteredList.add(item);
+    };
+
+    return filteredList;
 };
 
 template <typename T> T* List<T>::get(unsigned int index) {

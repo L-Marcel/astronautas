@@ -5,6 +5,9 @@ class System {
     private:
         List<Astronaut>* astronauts;
         List<Expedition>* expeditions;
+        
+        /// @brief Restart and update the system
+        static void restart();
     public:
         System(List<Astronaut>* astronauts, List<Expedition>* expeditions);
 

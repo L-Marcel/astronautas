@@ -17,6 +17,11 @@ template <typename T> class List {
         /// @param compare The function used to compare the items
         void sort(function<bool(T*, T*)> compare);
 
+        /// @brief Filter the list
+        /// @param condition The filter condition function
+        /// @return A new list, but filtered
+        List<T> filter(function<bool(T*)> condition);
+
         /// @brief Gets an item by index
         /// @param index Item's index
         /// @return Item's pointer

@@ -5,8 +5,13 @@ System::System(List<Astronaut>* astronauts, List<Expedition>* expeditions) {
     this->expeditions = expeditions;
 };
 
+void System::restart() {
+    system("make dev && make run");
+};
+
 void System::menu() {
     char option = ' ';
+
     do {
         clear();
         cout << "ASTRONAUTAS / SISTEMA DE VOO" << endl << endl;
