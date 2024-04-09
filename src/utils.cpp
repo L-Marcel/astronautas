@@ -61,7 +61,10 @@ string toCpf(string text) {
         };
        
         skip = false;
-        result += text[i];;
+
+        if(text[i] < '0' || text[i] > '9') break;
+
+        result += text[i];
     };
 
     return result;
@@ -72,7 +75,7 @@ bool isCpf(string text) {
     return regex_match(text.begin(), text.end(), rx) && text.length() == 14;
 };
 
-void clear_terminal() {
+void clearTerminal() {
     #ifdef _WIN32
         system("cls");
     #else
@@ -105,7 +108,29 @@ char input(string text) {
     #else
         while(true) {
             int ch = linux_getch();
-            if(ch != EOF) return ch;
+            if(ch != EOF) {
+                return ch;
+            };
         };
     #endif
+};
+
+char getChar() {
+    char result;
+
+    do {
+        result = getchar();
+    } while(result == '\n');
+
+    return result;
+};
+
+string getLine() {
+    string result;
+
+    while(getline(cin, result)) {
+        if(result != "") break;
+    };
+
+    return result;
 };

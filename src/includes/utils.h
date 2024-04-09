@@ -52,8 +52,16 @@ string toCpf(string text);
 /// @return True if formatted, false otherwise
 bool isCpf(string text);
 
-/// @brief clear_terminal terminal
-void clear_terminal();
+/// @brief Clear the terminal
+void clearTerminal();
+
+/// @brief My version of getchar
+/// @return Line's char
+char getChar();
+
+/// @brief My version of getline
+/// @return Line's string
+string getLine();
 
 /// @brief Pause terminal and input a message
 /// @param text Terminal message

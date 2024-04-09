@@ -13,7 +13,7 @@ void System::menu() {
     char option = ' ';
 
     do {
-        clear_terminal();
+        clearTerminal();
         cout << "ASTRONAUTAS / SISTEMA DE VOO" << endl << endl;
         cout << "[0] Cadastrar astronauta" << endl;
         cout << "[1] Iniciar planejamento de voo" << endl;
@@ -46,12 +46,12 @@ void System::menu() {
                 );
                 break;
             case BACKSPACE:
-                char confirm = ' ';
+                char confirm;
 
                 do {
-                    clear_terminal();
+                    clearTerminal();
                     cout << "Tem certeza que deseja sair [Y/n]? ";
-                    confirm = tolower(getchar());
+                    confirm = tolower(getChar());
                 } while(confirm != 'y' && confirm != 'n');
 
                 if(confirm == 'n') option = ' ';

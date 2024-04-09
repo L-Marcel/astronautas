@@ -1,12 +1,20 @@
 BUILD=build/main.o build/system.o build/expedition.o build/astronaut.o build/list.o build/utils.o
 FLAGS=-g -Wall -pedantic -Isrc/includes
 
+ifeq ($(OS),Windows_NT)
+	EXEC=./main.exe
+	BUILD_FRAG=
+else
+	EXEC=./main
+	BUILD_FRAG=-Wl,--copy-dt-needed-entries -lncurses
+endif
+
 run:
-	./main
+	${EXEC}
 dev: compile
-	./main
+	${EXEC}
 compile: ${BUILD}
-	g++ -o main ${BUILD} -Wl,--copy-dt-needed-entries -lncurses
+	g++ -o main ${BUILD} ${BUILD_FRAG}
 build/main.o: src/main.cpp
 	g++ ${FLAGS} -c src/main.cpp -o build/main.o
 build/system.o: src/system.cpp src/includes/system.h

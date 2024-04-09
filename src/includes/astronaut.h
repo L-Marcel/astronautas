@@ -26,12 +26,14 @@ enum AstronautSearch {
 
 class Astronaut {
     private:
-        
+
         bool alive = true;
         unsigned int expeditions = 0;
+        
         string name;
         string cpf;
         Gener gener;
+        int age;
 
         /// @brief Get the max lenght of an astronaut's name
         /// @param database Astronaut database
@@ -58,7 +60,7 @@ class Astronaut {
         bool available = true;
 
         Astronaut();
-        Astronaut(string name, string cpf, Gener gener);
+        Astronaut(string name, string cpf, Gener gener, int age);
 
         /// @brief Compare two astronauts
         /// @param a First astronaut

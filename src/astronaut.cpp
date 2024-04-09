@@ -9,10 +9,11 @@ string generToString(Gener gener) {
 };
 
 Astronaut::Astronaut() {};
-Astronaut::Astronaut(string name, string cpf, Gener gener) {
+Astronaut::Astronaut(string name, string cpf, Gener gener, int age) {
     this->name = name;
     this->cpf = cpf;
     this->gener = gener;
+    this->age = age;
 };
 
 long long unsigned int Astronaut::getMaxNameWidth(List<Astronaut>* database) {
@@ -58,37 +59,31 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
     string name;
     string cpf;
     Gener gener;
+    int age;
 
     do {
-        clear_terminal();
+        clearTerminal();
         cout << "CRIANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? ";
-        getline(cin, name);
-        name = capitalize(trim(name));
+        name = capitalize(trim(getLine()));
     } while(name == "");
     
     while(true) {
-        clear_terminal();
+        clearTerminal();
         cout << "CRIANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? ";
 
-        getline(cin, cpf);
-        cpf = trim(cpf);
+        cpf = toCpf(trim(getLine()));
 
-        bool unformattedCpf = cpf.length() == 11 && !isCpf(cpf);
-        bool formattedCpf = isCpf(cpf);
+        bool validCpf = isCpf(cpf);
 
-        if(unformattedCpf || formattedCpf) {
-            if(unformattedCpf) {
-                cpf = toCpf(cpf);
-            };
-
+        if(validCpf) {
             if(database->exists([&cpf](Astronaut* astronaut){
                 return astronaut->cpf == cpf;
             })) {
                 while(true) {
-                    clear_terminal();
+                    clearTerminal();
                     cout << "Existe um astronauta cadastrado com esse CPF!" << endl;
                     char key = input("Pressione ENTER para tentar novamente\nOu BACKSPACE para cancelar...");
                     if(ENTER == key) break;
@@ -96,25 +91,13 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
                 };
                 
                 cpf = "";
-            } else if(isCpf(cpf)) {
-                break;
-            } else {
-                while(true) {
-                    clear_terminal();
-                    cout << "Informe um CPF valido!" << endl;
-                    char key = input("Pressione ENTER para tentar novamente\nOu BACKSPACE para cancelar...");
-                    if(ENTER == key) break;
-                    else if('\b' == key) return NULL;
-                };
-
-                cpf = "";
-            };
+            } else break;
         };
     };
 
     char generChar;
     do {
-        clear_terminal();
+        clearTerminal();
         cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? " << cpf << endl;
@@ -126,7 +109,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
 
         cout << "Resposta: ";
 
-        generChar = tolower(getchar());
+        generChar = tolower(getChar());
     } while(generChar != 'm' && generChar != 'f' && generChar != 'o');
 
     switch (generChar) {
@@ -142,20 +125,50 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
     };
 
     string generRef = generToString(gener);
-    char confirm;
     do {
-        clear_terminal();
+        clearTerminal();
         cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? " << cpf << endl;
-        cout << "Com qual genero o astronauta se identifica? " << generRef << endl << endl;
+        cout << "Com qual genero o astronauta se identifica? " << generRef << endl;
+        cout << "Qual a idade do astronauta? ";
+
+        age = stoi(getLine());
+        if(age > 200) {
+            while(true) {
+                clearTerminal();
+                cout << "A idade limite aceitavel e 200!" << endl;
+                char key = input("Pressione ENTER para tentar novamente\nOu BACKSPACE para cancelar...");
+                if(ENTER == key) break;
+                else if('\b' == key) return NULL;
+            };
+        } else if(age < 18) {
+            while(true) {
+                clearTerminal();
+                cout << "O astronauta precisa ser maior de idade!" << endl;
+                char key = input("Pressione ENTER para tentar novamente\nOu BACKSPACE para cancelar...");
+                if(ENTER == key) break;
+                else if('\b' == key) return NULL;
+            };
+        };
+    } while(age == EOF || age > 200 || age < 18);
+
+    char confirm;
+    do {
+        clearTerminal();
+        cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
+        cout << "Qual o nome do astronauta? " << name << endl;
+        cout << "Qual o cpf do astronauta? " << cpf << endl;
+        cout << "Com qual genero o astronauta se identifica? " << generRef << endl;
+        cout << "Qual a idade do astronauta? " << age << endl;
         cout << "Confirmar cadastro [Y/n]? ";
-        confirm = tolower(getchar());
+        
+        confirm = tolower(getChar());
     } while(confirm != 'y' && confirm != 'n');
 
     if(confirm == 'n') return NULL;
 
-    Astronaut* createdAstronaut = new Astronaut(name, cpf, gener);
+    Astronaut* createdAstronaut = new Astronaut(name, cpf, gener, age);
     database->add(createdAstronaut);
     database->sort(Astronaut::compare);
 
@@ -208,7 +221,7 @@ Astronaut* Astronaut::search(
         end = min(amount, ((page + 1) * perPage));
         start = (page * perPage);
 
-        clear_terminal();
+        clearTerminal();
 
         if(amount > 0) {
             cout << title << " [" << page + 1 << "/" << maxPage + 1 << "]" << endl << endl;
@@ -219,16 +232,21 @@ Astronaut* Astronaut::search(
                 cout << "Buscando por CPF: " + searchParam << endl << endl;
             };
 
-            cout << "[#]  " << setw(maxNameWidth + 2) << left << "NOME" << setw(16) << "CPF" << setw(6) << "VOOS" << setw(15) << "STATUS" << endl;
+            cout << "[#]  " << setw(maxNameWidth + 2) << left << "NOME" << setw(16) << "CPF" << setw(7) << "IDADE" << setw(6) << "VOOS" << setw(15) << "STATUS" << endl;
             for(unsigned int i = start; i < end; i++) {
                 cout << "[" << i - (page * perPage) << "]  ";
                 database->get(i + alivesGap)->print(maxNameWidth);
-
             };
 
             cout << endl;
-            if(page < maxPage) cout << "[->] Proxima pagina" << endl;
-            if(page > 0) cout << "[<-] Pagina anterior" << endl;
+
+            bool nextPage = page < maxPage;
+            bool previousPage = page > 0;
+
+            if(nextPage) cout << "[->] Proxima pagina" << endl;
+            if(previousPage) cout << "[<-] Pagina anterior" << endl;
+
+            if(nextPage || previousPage) cout << endl;
         } else {
             if(search == NAME) {
                 cout << "NENHUM ASTRONAUTA ENCONTRADO COM\nNOME: " + searchParam << endl << endl;
@@ -255,19 +273,22 @@ Astronaut* Astronaut::search(
             unsigned int index = (key - '0') + (page * perPage) + alivesGap;
             return database->get(index);
         } else if(key == SPECIAL_KEY) {
-            int specialKey = getch();
+            #ifdef _WIN32
+                int specialKey = getch();
+            #else
+                int specialKey = input("");
+            #endif
             if(specialKey == LEFT && page > 0) page--;
             else if(specialKey == RIGHT && page < maxPage) page++;
         } else if(key == 'n' && search == NONE) {
             string nameToSearch = "";
 
             do {
-                clear_terminal();
+                clearTerminal();
                 cout << title << endl << endl;
                 cout << "Qual o NOME do astronauta que voce este procurando? ";
 
-                getline(cin, nameToSearch);
-                nameToSearch = trim(nameToSearch);
+                nameToSearch = trim(getLine());
             } while(nameToSearch == "");
 
             string lowerNameToSearch = lower(nameToSearch);
@@ -280,12 +301,11 @@ Astronaut* Astronaut::search(
             string cpfToSearch = "";
 
             do {
-                clear_terminal();
+                clearTerminal();
                 cout << title << endl << endl;
                 cout << "Qual o CPF do astronauta que voce este procurando? ";
 
-                getline(cin, cpfToSearch);
-                cpfToSearch = toCpf(cpfToSearch);
+                cpfToSearch = toCpf(getLine());
             } while(cpfToSearch == "");
 
             List<Astronaut> filteredAstronaut = database->filter([&cpfToSearch](Astronaut* astronaut){
@@ -332,5 +352,5 @@ void Astronaut::print(long long unsigned int maxNameWidth) {
             ))
     );
 
-    cout << setw(maxNameWidth + 2) << left << name << setw(16) << cpf << setw(6) << expeditions << setw(15) << availability << endl;
+    cout << setw(maxNameWidth + 2) << left << name << setw(16) << cpf << setw(7) << age << setw(6) << expeditions << setw(15) << availability << endl;
 }; 
