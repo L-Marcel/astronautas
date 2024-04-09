@@ -72,7 +72,7 @@ bool isCpf(string text) {
     return regex_match(text.begin(), text.end(), rx) && text.length() == 14;
 };
 
-void clear() {
+void clear_terminal() {
     #ifdef _WIN32
         system("cls");
     #else
@@ -80,9 +80,32 @@ void clear() {
     #endif
 };
 
+#ifndef _WIN32
+int linux_getch(){
+  struct termios oldattr, newattr;
+  unsigned char ch;
+  int retcode;
+  tcgetattr(STDIN_FILENO, &oldattr);
+  newattr=oldattr;
+  newattr.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newattr);
+  retcode=read(STDIN_FILENO, &ch, 1);
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
+  return retcode<=0? EOF: (int)ch;
+};
+#endif
+
 char input(string text) {
     cout << text;
-    while(true) {
-        if(kbhit()) return getch();
-    };
+
+    #ifdef _WIN32
+        while(true) {
+            if(kbhit()) return getch();
+        };
+    #else
+        while(true) {
+            int ch = linux_getch();
+            if(ch != EOF) return ch;
+        };
+    #endif
 };

@@ -2,14 +2,28 @@
 #include <iostream>
 #include <iomanip>
 #include <regex>
-#include <conio.h>
 
-#define SPACE 32
-#define ENTER 13
-#define BACKSPACE 8
-#define SPECIAL_KEY 0
-#define LEFT 75
-#define RIGHT 77
+#ifdef _WIN32
+    #include <conio.h>
+
+    #define SPACE 32
+    #define ENTER 13
+    #define BACKSPACE 8
+    #define SPECIAL_KEY 0
+    #define LEFT 75
+    #define RIGHT 77
+#else
+    #include <termios.h>
+    #include <ncurses.h>
+    #include <unistd.h>
+
+    #define SPACE 32
+    #define ENTER 10
+    #define BACKSPACE 127
+    #define SPECIAL_KEY 91
+    #define LEFT 68
+    #define RIGHT 67
+#endif
 
 using namespace std;
 
@@ -38,8 +52,8 @@ string toCpf(string text);
 /// @return True if formatted, false otherwise
 bool isCpf(string text);
 
-/// @brief Clear terminal
-void clear();
+/// @brief clear_terminal terminal
+void clear_terminal();
 
 /// @brief Pause terminal and input a message
 /// @param text Terminal message

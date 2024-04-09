@@ -6,7 +6,7 @@ run:
 dev: compile
 	./main
 compile: ${BUILD}
-	g++ -o main ${BUILD}
+	g++ -o main ${BUILD} -Wl,--copy-dt-needed-entries -lncurses
 build/main.o: src/main.cpp
 	g++ ${FLAGS} -c src/main.cpp -o build/main.o
 build/system.o: src/system.cpp src/includes/system.h

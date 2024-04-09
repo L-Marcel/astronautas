@@ -60,7 +60,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
     Gener gener;
 
     do {
-        clear();
+        clear_terminal();
         cout << "CRIANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? ";
         getline(cin, name);
@@ -68,7 +68,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
     } while(name == "");
     
     while(true) {
-        clear();
+        clear_terminal();
         cout << "CRIANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? ";
@@ -88,7 +88,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
                 return astronaut->cpf == cpf;
             })) {
                 while(true) {
-                    clear();
+                    clear_terminal();
                     cout << "Existe um astronauta cadastrado com esse CPF!" << endl;
                     char key = input("Pressione ENTER para tentar novamente\nOu BACKSPACE para cancelar...");
                     if(ENTER == key) break;
@@ -100,7 +100,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
                 break;
             } else {
                 while(true) {
-                    clear();
+                    clear_terminal();
                     cout << "Informe um CPF valido!" << endl;
                     char key = input("Pressione ENTER para tentar novamente\nOu BACKSPACE para cancelar...");
                     if(ENTER == key) break;
@@ -114,7 +114,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
 
     char generChar;
     do {
-        clear();
+        clear_terminal();
         cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? " << cpf << endl;
@@ -144,7 +144,7 @@ Astronaut* Astronaut::form(List<Astronaut>* database) {
     string generRef = generToString(gener);
     char confirm;
     do {
-        clear();
+        clear_terminal();
         cout << "CADASTRANDO NOVO ASTRONAUTA" << endl << endl;
         cout << "Qual o nome do astronauta? " << name << endl;
         cout << "Qual o cpf do astronauta? " << cpf << endl;
@@ -208,7 +208,7 @@ Astronaut* Astronaut::search(
         end = min(amount, ((page + 1) * perPage));
         start = (page * perPage);
 
-        clear();
+        clear_terminal();
 
         if(amount > 0) {
             cout << title << " [" << page + 1 << "/" << maxPage + 1 << "]" << endl << endl;
@@ -262,7 +262,7 @@ Astronaut* Astronaut::search(
             string nameToSearch = "";
 
             do {
-                clear();
+                clear_terminal();
                 cout << title << endl << endl;
                 cout << "Qual o NOME do astronauta que voce este procurando? ";
 
@@ -280,7 +280,7 @@ Astronaut* Astronaut::search(
             string cpfToSearch = "";
 
             do {
-                clear();
+                clear_terminal();
                 cout << title << endl << endl;
                 cout << "Qual o CPF do astronauta que voce este procurando? ";
 
