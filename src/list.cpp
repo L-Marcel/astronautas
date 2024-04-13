@@ -1,6 +1,6 @@
 #include "includes/list.h"
 
-template <typename T> inline List<T>::List() {
+template <typename T> List<T>::List() {
     this->qtd = 0;
     this->items = new T*[0];
 };
@@ -18,11 +18,11 @@ template <typename T> void List<T>::add(T* item) {
     this->items = items;
 };
 
-template <typename T> inline void List<T>::sort(function<bool(T*, T*)> compare) {
+template <typename T> void List<T>::sort(function<bool(T*, T*)> compare) {
     std::sort(this->items, this->items + this->qtd, compare);
 };
 
-template <typename T> inline List<T> List<T>::filter(function<bool(T*)> condition) {
+template <typename T> List<T> List<T>::filter(function<bool(T*)> condition) {
     List<T> filteredList;
 
     for(unsigned int i = 0; i < this->qtd; i++) {
