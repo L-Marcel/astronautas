@@ -230,6 +230,8 @@ Astronaut* Astronaut::search(
                 cout << "Buscando por NOME: " + searchParam << endl << endl;
             } else if(search == CPF) {
                 cout << "Buscando por CPF: " + searchParam << endl << endl;
+            } else if(search == AGE) {
+                cout << "Bsucando por IDADE: " + searchParam << endl << endl;
             };
 
             cout << "[#]  " << setw(maxNameWidth + 2) << left << "NOME" << setw(16) << "CPF" << setw(7) << "IDADE" << setw(6) << "VOOS" << setw(15) << "STATUS" << endl;
@@ -252,6 +254,8 @@ Astronaut* Astronaut::search(
                 cout << "NENHUM ASTRONAUTA ENCONTRADO COM\nNOME: " + searchParam << endl << endl;
             } else if(search == CPF) {
                 cout << "NENHUM ASTRONAUTA ENCONTRADO COM\nCPF: " + searchParam << endl << endl;
+            } else if(search == AGE) {
+                cout << "NENHUM ASTRONAUTA ENCONTRADO COM\nIDADE: " + searchParam << endl << endl;
             } else {
                 cout << "NENHUM ASTRONAUTA ENCONTRADO" << endl << endl;
             };
@@ -260,6 +264,7 @@ Astronaut* Astronaut::search(
         if(search == NONE) {
             cout << "[n] Buscar astronauta por NOME" << endl;
             cout << "[c] Buscar astronauta por CPF" << endl;
+            cout << "[i] Buscar astronauta por IDADE" << endl;
             cout << "[BACKSPACE] Voltar para o menu" << endl << endl;
         } else {
             cout << "[ENTER] Limpar parametro de busca" << endl;;
@@ -313,6 +318,75 @@ Astronaut* Astronaut::search(
             });
 
             return Astronaut::search(&filteredAstronaut, title, filter, CPF, cpfToSearch, catchAstronaut, baseDatabase);
+        } else if(key == 'i' && search == NONE) {
+            char method;
+            do {
+                clearTerminal();
+                cout << "Qual o metodo de busca?" << endl << endl;
+                cout << "[0] Astronautas com idade maior que..." << endl;
+                cout << "[1] Astronautas com idade menor que..." << endl;
+                cout << "[2] Astronautas com idade igual a..." << endl;
+                cout << "[3] Astronautas com idade diferente de.." << endl;
+                cout << "[4] Astronautas com idade maior ou igual a..." << endl;
+                cout << "[5] Astronautas com idade menor ou igual a..." << endl << endl;
+                method = input("");
+            } while(method < '0' || method > '5');
+
+            int ageToSearch;
+            string ageText;
+            do {
+                clearTerminal();
+
+                switch(method) {
+                    case '0': 
+                        cout << "Buscar astronautas com idade maior que? ";
+                        ageToSearch = stoi(getLine());
+                        ageText = "maior que " + ageToSearch;
+                        break;
+                    case '1':
+                        cout << "Buscar astronautas com idade menor que? ";
+                        ageToSearch = stoi(getLine());
+                        ageText = "menor que " + ageToSearch;
+                        break;
+                    case '2':
+                        cout << "Buscar astronautas com idade igual a? ";
+                        ageToSearch = stoi(getLine());
+                        ageText = "igual a " + ageToSearch;
+                        break;
+                    case '3':
+                        cout << "Buscar astronautas com idade diferente de? ";
+                        ageToSearch = stoi(getLine());
+                        ageText = "diferente de " + to_string(ageToSearch);
+                        break;
+                    case '4':
+                        cout << "Buscar astronautas maior ou igual a? ";
+                        ageToSearch = stoi(getLine());
+                        ageText = "maior ou igual a " + to_string(ageToSearch);
+                        break;
+                    case '5':
+                        cout << "Buscar astronautas menor ou igual a? ";
+                        ageToSearch = stoi(getLine());
+                        ageText = "menor ou igual a " + to_string(ageToSearch);
+                        break;
+                    default:
+                        break;
+                };
+            } while(ageToSearch == EOF);
+
+            
+            List<Astronaut> filteredAstronaut = database->filter([&method, &ageToSearch](Astronaut* astronaut){
+                switch(method) {
+                    case '0': return astronaut->getAge() > ageToSearch;
+                    case '1': return astronaut->getAge() < ageToSearch;
+                    case '2': return astronaut->getAge() == ageToSearch;
+                    case '3': return astronaut->getAge() != ageToSearch;
+                    case '4': return astronaut->getAge() >= ageToSearch;
+                    case '5': return astronaut->getAge() <= ageToSearch;
+                    default: return true;
+                };
+            });
+
+            return Astronaut::search(&filteredAstronaut, title, filter, AGE, ageText, catchAstronaut, baseDatabase);
         } else if(key == ENTER && search != NONE && baseDatabase != NULL) {
             return Astronaut::search(baseDatabase, title, filter, NONE, "", catchAstronaut, baseDatabase);
         };
@@ -335,6 +409,10 @@ string Astronaut::getName() {
 
 string Astronaut::getCpf() {
     return this->cpf;
+};
+
+int Astronaut::getAge() {
+    return this->age;
 };
 
 void Astronaut::kill() {

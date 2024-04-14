@@ -27,6 +27,11 @@ template <typename T> class List {
         /// @return Item's pointer
         T* get(unsigned int index);
 
+        /// @brief Gets an item's index
+        /// @param item Item's pointer
+        /// @return The index, if the item exists, throw an error otherwise
+        unsigned int getIndex(T* item);
+
         /// @brief Find an astronaut if exists
         /// @param search Function to search
         /// @return Astronaut's pointer if exists, NULL otherwise

@@ -34,6 +34,14 @@ template <typename T> List<T> List<T>::filter(function<bool(T*)> condition) {
     return filteredList;
 };
 
+template <typename T> unsigned int List<T>::getIndex(T* item) {
+    for(unsigned int i = 0; i < this->qtd; i++) {
+        if(this->items[i] == item) return i;
+    }; 
+
+    throw (-1);
+};
+
 template <typename T> T* List<T>::get(unsigned int index) {
     if(index > this->qtd - 1) return NULL;
     return this->items[index];
@@ -41,14 +49,16 @@ template <typename T> T* List<T>::get(unsigned int index) {
 
 template <typename T> void List<T>::remove(unsigned int index) {
     if(index > this->qtd - 1) return;
-
-    this->qtd--;
-    T** items = new T*[qtd];
     
-    int gap = 0;
-    for(unsigned int i = 0; i < qtd - 1; i++) {
-        if(i == index) gap++;
-        items[i] = this->items[i + gap];
+    this->qtd--;
+    T** items = new T*[this->qtd];
+    
+    if(this->qtd > 0) {
+        int gap = 0;
+        for(unsigned int i = 0; i < this->qtd; i++) {
+            if(i == index) gap++;
+            items[i] = this->items[i + gap];
+        };
     };
 
     delete[] this->items;

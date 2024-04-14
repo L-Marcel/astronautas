@@ -5,10 +5,6 @@ System::System(List<Astronaut>* astronauts, List<Expedition>* expeditions) {
     this->expeditions = expeditions;
 };
 
-void System::restart() {
-    system("make dev && make run");
-};
-
 void System::menu() {
     char option = ' ';
 
@@ -29,7 +25,9 @@ void System::menu() {
                 Astronaut::form(this->astronauts);
                 break;
             case '1':
-                //Expedition::form(&astronauts, &expeditions);
+                Expedition::form(this->expeditions, this->astronauts);
+                break;
+            case '2':
                 break;
             case '3':
                 Astronaut::list(

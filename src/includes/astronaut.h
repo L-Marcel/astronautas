@@ -21,7 +21,8 @@ enum AstronautFilter {
 enum AstronautSearch {
     NONE,
     NAME,
-    CPF
+    CPF,
+    AGE
 };
 
 class Astronaut {
@@ -99,6 +100,9 @@ class Astronaut {
 
         /// @return Astronaut's cpf
         string getCpf();
+
+        /// @return Astronaut's age
+        int getAge();
 
         /// @brief Kill the astronaut
         void kill();

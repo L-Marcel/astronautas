@@ -42,6 +42,11 @@ string lower(string text);
 /// @return The capitalized string
 string capitalize(string text);
 
+/// @brief Pass a code to string
+/// @param code the code
+/// @return the string
+string codeToString(int code);
+
 /// @brief Format a string to CPF
 /// @param text The string
 /// @return Formatted string

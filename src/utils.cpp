@@ -33,6 +33,27 @@ string capitalize(string text) {
     return text;
 };
 
+string codeToString(int code) {
+    string result = "";
+    
+    int steps = 0;
+    int rest = 0;
+    do {
+        steps++;
+        rest = code % 10;
+        result = to_string(rest) + result;
+        code -= rest;
+        code /= 10;
+    } while(code > 0);
+
+    while(steps < 3) {
+        steps++;
+        result = "0" + result;
+    };
+
+    return result;
+};
+
 string toCpf(string text) {
     string result = "";
 
