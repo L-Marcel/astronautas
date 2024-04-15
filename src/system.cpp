@@ -28,6 +28,7 @@ void System::menu() {
                 Expedition::form(this->expeditions, this->astronauts);
                 break;
             case '2':
+                Expedition::list(this->expeditions);
                 break;
             case '3':
                 Astronaut::list(
