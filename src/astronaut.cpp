@@ -234,7 +234,11 @@ Astronaut* Astronaut::search(
                 cout << "Bsucando por IDADE: " + searchParam << endl << endl;
             };
 
-            cout << "[#]  " << setw(maxNameWidth + 2) << left << "NOME" << setw(16) << "CPF" << setw(7) << "IDADE" << setw(6) << "VOOS" << setw(15) << "STATUS" << endl;
+            cout << "[#]  " << setw(maxNameWidth + 2) << left << "NOME" 
+            << setw(16) << "CPF" 
+            << setw(7) << "IDADE" 
+            << setw(6) << "VOOS" 
+            << setw(15) << "STATUS" << endl;
             for(unsigned int i = start; i < end; i++) {
                 cout << "[" << i - (page * perPage) << "]  ";
                 database->get(i + alivesGap)->print(maxNameWidth);
@@ -373,7 +377,6 @@ Astronaut* Astronaut::search(
                 };
             } while(ageToSearch == EOF);
 
-            
             List<Astronaut> filteredAstronaut = database->filter([&method, &ageToSearch](Astronaut* astronaut){
                 switch(method) {
                     case '0': return astronaut->getAge() > ageToSearch;
@@ -415,20 +418,35 @@ int Astronaut::getAge() {
     return this->age;
 };
 
+string Astronaut::getStateAsString() {
+    return this->alive? 
+        (this->available? "Disponivel":"Indisponivel"):
+        (this->gener == MALE? "Morto": (
+            this->gener == FEMALE? "Morta":
+            "Mortx"
+        ));
+};
+
+bool Astronaut::getAvailable() {
+    return this->available && this->alive;
+};
+
+void Astronaut::sendToExpedition() {
+    this->available = false;
+};
+
+void Astronaut::returnFromExpedition() {
+    if(this->alive) this->available = true;
+};
+
 void Astronaut::kill() {
     this->alive = false;
 };
 
 void Astronaut::print(long long unsigned int maxNameWidth) {
-    string availability = "[";
-    availability.append(
-        this->alive? 
-            (this->available? "Disponivel]":"Indisponivel]"):
-            (this->gener == MALE? "Morto]": (
-                this->gener == FEMALE? "Morta]":
-                "Mortx]"
-            ))
-    );
-
-    cout << setw(maxNameWidth + 2) << left << name << setw(16) << cpf << setw(7) << age << setw(6) << expeditions << setw(15) << availability << endl;
+    cout << setw(maxNameWidth + 2) << left << name 
+    << setw(16) << cpf 
+    << setw(7) << age 
+    << setw(6) << expeditions 
+    << setw(15) << "[" + this->getStateAsString() + "]" << endl;
 }; 

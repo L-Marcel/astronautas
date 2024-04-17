@@ -89,6 +89,15 @@ template <typename T> bool List<T>::exists(function<bool(T*)> compare) {
     return false;
 };
 
+template <typename T> bool List<T>::all(function<bool(T*)> check) {
+    for(unsigned int i = 0; i < this->qtd; i++) {
+        if(!check(this->items[i])) {
+            return false;
+        };
+    };
+
+    return true;
+};
 
 class Astronaut;
 class Expedition;

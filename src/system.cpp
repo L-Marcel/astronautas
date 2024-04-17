@@ -8,12 +8,13 @@ System::System(List<Astronaut>* astronauts, List<Expedition>* expeditions) {
 void System::menu() {
     char option = ' ';
 
+    Expedition* expedition = NULL;
     do {
         clearTerminal();
         cout << "ASTRONAUTAS / SISTEMA DE VOO" << endl << endl;
         cout << "[0] Cadastrar astronauta" << endl;
         cout << "[1] Iniciar planejamento de voo" << endl;
-        cout << "[2] Acessar painel de controle de voo" << endl;
+        cout << "[2] Lista de voos" << endl;
         cout << "[3] Listar astronautas da empresa" << endl;
         cout << "[4] Listar astronautas falecidos (memorial)" << endl << endl;
         cout << "[BACKSPACE] Sair do sistema de voo" << endl << endl;
@@ -28,7 +29,9 @@ void System::menu() {
                 Expedition::form(this->expeditions, this->astronauts);
                 break;
             case '2':
-                Expedition::list(this->expeditions);
+                expedition = Expedition::list(this->expeditions);
+                if(expedition != NULL) expedition->edit(this->expeditions, this->astronauts);
+                expedition = NULL;
                 break;
             case '3':
                 Astronaut::list(

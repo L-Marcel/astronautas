@@ -41,10 +41,15 @@ bool Expedition::compare(Expedition* a, Expedition* b) {
 Expedition* Expedition::form(List<Expedition>* database, List<Astronaut>* astronauts) {
     ExpeditionState state = PLANNING;
     unsigned int amount = database->getAmount();
-    int code = amount > 0? 
-        (database->get(amount - 1)->getCode() + 1)
-        :1;
 
+    int lastCode = 0;
+
+    for(unsigned int i = 0; i < amount; i++) {
+        int code = database->get(i)->getCode();
+        if(code > lastCode) lastCode = code;
+    };
+
+    int code = lastCode + 1;
     
     Expedition* expedition = new Expedition(state, code);
     Astronaut* astronaut = NULL;
@@ -52,14 +57,12 @@ Expedition* Expedition::form(List<Expedition>* database, List<Astronaut>* astron
     char option;
     bool planning = true;
     while(planning) {
-        bool canConfirm = expedition->astronauts.getAmount() > 0;
-
         clearTerminal();
         cout << "INICIANDO PLANEJAMENTO DO VOO " << codeToString(code) << endl << endl;
         cout << "[0] Adicionar astronauta ao voo" << endl;
         cout << "[1] Listar astronautas do voo (total: " << expedition->astronauts.getAmount() << ")" << endl;
         cout << "[2] Remover astronauta do voo" << endl << endl;
-        if(canConfirm) cout << "[ENTER] Confirmar planejamento do voo" << endl;
+        cout << "[ENTER] Confirmar planejamento do voo" << endl;
         cout << "[BACKSPACE] Cancelar planejamento do voo" << endl << endl;
 
         option = input("");
@@ -87,22 +90,20 @@ Expedition* Expedition::form(List<Expedition>* database, List<Astronaut>* astron
                 astronaut = NULL;
                 break;
             case ENTER:
-                if(canConfirm) {
-                    char confirm;
-                    do {
-                        clearTerminal();
-                        
-                        cout << "Uma vez planejado, o voo " + codeToString(code) + " deve acontecer!" << endl;
-                        cout << "Deseja mesmo planejar esse voo [Y/n]? ";
-                
-                        confirm = tolower(getChar());
-                    } while(confirm != 'y' && confirm != 'n');
+                char confirm;
+                do {
+                    clearTerminal();
+                    
+                    cout << "Uma vez planejado, o voo " + codeToString(code) + " deve acontecer!" << endl;
+                    cout << "Deseja mesmo planejar esse voo [Y/n]? ";
+            
+                    confirm = tolower(getChar());
+                } while(confirm != 'y' && confirm != 'n');
 
-                    if(confirm == 'y') {
-                        database->add(expedition);
-                        database->sort(Expedition::compare);
-                        return expedition;
-                    };
+                if(confirm == 'y') {
+                    database->add(expedition);
+                    database->sort(Expedition::compare);
+                    return expedition;
                 };
                 break;
             case BACKSPACE:
@@ -149,7 +150,9 @@ Expedition* Expedition::list(List<Expedition>* database) {
         if(amount > 0) {
             cout << "VOOS CADASTRADOS" << " [" << page + 1 << "/" << maxPage + 1 << "]" << endl << endl;
 
-            cout << "[#]  " << setw(maxCodeWitdth + 2) << left << "CODIGO" << setw(13) << "TRIPULANTES" << setw(16) << "STATUS" << endl;
+            cout << "[#]  " << setw(maxCodeWitdth + 2) << left << "CODIGO" 
+            << setw(13) << "TRIPULANTES" 
+            << setw(16) << "STATUS" << endl;
             for(unsigned int i = start; i < end; i++) {
                 cout << "[" << i - (page * perPage) << "]  ";
                 database->get(i)->print(maxCodeWitdth);
@@ -188,6 +191,192 @@ Expedition* Expedition::list(List<Expedition>* database) {
     } while(true);
 
     return NULL;
+};
+
+void Expedition::edit( 
+    List<Expedition>* database, 
+    List<Astronaut>* astronauts
+) {
+    char option;
+    Astronaut* astronaut = NULL;
+    List<Astronaut> astronautCanBeAdded;
+
+    switch (this->getState()) {
+        case PLANNING:
+            while(true) {
+                bool canLaunch = 
+                    this->astronauts.getAmount() > 0
+                    && this->astronauts.all([](Astronaut* astronaut){
+                        return astronaut->getAvailable();
+                    });
+
+                clearTerminal();
+                cout << "PLANEJAMENTO DO VOO " << codeToString(this->code) << endl << endl;
+                cout << "[0] Adicionar astronauta ao voo" << endl;
+                cout << "[1] Listar astronautas do voo (total: " << this->astronauts.getAmount() << ")" << endl;
+                cout << "[2] Remover astronauta do voo" << endl;
+                if(canLaunch) cout << "[3] Lançar voo" << endl;
+                cout << endl << "[BACKSPACE] Voltar para menu" << endl << endl;
+
+                option = input("");
+
+                switch(option) {
+                    case '0':
+                        astronautCanBeAdded = astronauts->filter(
+                            [this](Astronaut* astronaut){
+                                return !(this->getAstronauts()->exists([&astronaut](Astronaut* another){
+                                    return astronaut == another;
+                                }));
+                            }
+                        );
+
+                        astronaut = Astronaut::list(&astronautCanBeAdded, "ADICIONANDO ASTRONAUTA AO VOO " + codeToString(this->code), ALIVE, true);
+                        if(astronaut != NULL) this->addAstronaut(astronaut);
+                        astronaut = NULL;
+                        break;
+                    case '1':
+                        Astronaut::list(&this->astronauts, "ASTRONAUTAS DO VOO " + codeToString(code), ALL, false);
+                        break;
+                    case '2':
+                        astronaut = Astronaut::list(&this->astronauts, "REMOVENDO ASTRONAUTA DO VOO " + codeToString(code), ALL, true);
+                        if(astronaut != NULL) this->removeAstronaut(astronaut);
+                        astronaut = NULL;
+                        break;
+                    case '3':
+                        if(canLaunch) {
+                            char confirm;
+                            do {
+                                clearTerminal();
+                                
+                                cout << "Deseja mesmo lançar o voo " << codeToString(code) << " [Y/n]? ";
+                        
+                                confirm = tolower(getChar());
+                            } while(confirm != 'y' && confirm != 'n');
+
+                            if(confirm == 'y') {
+                                this->state = HAPPENING;
+                                
+                                for(unsigned int i = 0; i < this->astronauts.getAmount(); i++) {
+                                    this->astronauts.get(i)->sendToExpedition();
+                                };
+
+                                database->sort(Expedition::compare);
+                                return;
+                            };
+                        };
+                        break;
+                    case BACKSPACE:
+                        return;
+                    default:
+                        break;
+                };
+            };
+            break;
+        case HAPPENING:
+            while(true) {
+                clearTerminal();
+                cout << "VOO " << codeToString(this->code) << "[LANÇADO]" << endl << endl;
+                cout << "[0] Listar astronautas no voo (total: " << this->astronauts.getAmount() << ")" << endl;
+                cout << "[1] Finalizar voo" << endl;
+                cout << "[2] Explodir voo" << endl << endl;
+                cout << "[BACKSPACE] Voltar para menu" << endl << endl;
+
+                option = input("");
+
+                switch(option) {
+                    case '0':
+                        Astronaut::list(&this->astronauts, "ASTRONAUTAS DO VOO " + codeToString(code), ALL, false);
+                        break;
+                    case '1':
+                        char confirmEnd;
+                        do {
+                            clearTerminal();
+                            
+                            cout << "Deseja mesmo finalizar o voo " << codeToString(code) << " [Y/n]? ";
+                    
+                            confirmEnd = tolower(getChar());
+                        } while(confirmEnd != 'y' && confirmEnd != 'n');
+
+                        if(confirmEnd == 'y') {
+                            this->state = SUCCESS;
+                            
+                            for(unsigned int i = 0; i < this->astronauts.getAmount(); i++) {
+                                this->astronauts.get(i)->returnFromExpedition();
+                            };
+
+                            database->sort(Expedition::compare);
+                            return;
+                        };
+                        break;
+                    case '2':
+                        char confirmExplosion;
+                        do {
+                            clearTerminal();
+                            
+                            cout << "Deseja mesmo registrar que o voo " << codeToString(code) << " explodiu [Y/n]? ";
+                    
+                            confirmExplosion = tolower(getChar());
+                        } while(confirmExplosion != 'y' && confirmExplosion != 'n');
+
+                        if(confirmExplosion == 'y') {
+                            this->state = FAILURE;
+                            
+                            for(unsigned int i = 0; i < this->astronauts.getAmount(); i++) {
+                                this->astronauts.get(i)->kill();
+                            };
+
+                            database->sort(Expedition::compare);
+                            return;
+                        };
+                        break;
+                    case BACKSPACE:
+                        return;
+                    default:
+                        break;
+                };
+            };
+        case SUCCESS:
+            while(true) {
+                clearTerminal();
+                cout << "VOO " << codeToString(this->code) << "[FINALIZADO COM SUCESSO]" << endl << endl;
+                cout << "[0] Listar astronautas no voo (total: " << this->astronauts.getAmount() << ")" << endl << endl;
+                cout << "[BACKSPACE] Voltar para menu" << endl << endl;
+
+                option = input("");
+
+                switch(option) {
+                    case '0':
+                        Astronaut::list(&this->astronauts, "ASTRONAUTAS DO VOO " + codeToString(code), ALL, false);
+                        break;
+                    case BACKSPACE:
+                        return;
+                    default:
+                        break;
+                };
+            };
+        case FAILURE:
+            while(true) {
+                clearTerminal();
+                cout << "VOO " << codeToString(this->code) << "[FRACASSO TOTAL]" << endl << endl;
+                cout << "[0] Listar astronautas no voo (total: " << this->astronauts.getAmount() << ")" << endl << endl;
+                cout << "[BACKSPACE] Voltar para menu" << endl << endl;
+
+                option = input("");
+
+                switch(option) {
+                    case '0':
+                        Astronaut::list(&this->astronauts, "ASTRONAUTAS DO VOO " + codeToString(code), ALL, false);
+                        break;
+                    case BACKSPACE:
+                        return;
+                    default:
+                        break;
+                };
+            };
+        default:
+            break;
+    }
+    
 };
 
 int Expedition::getCode() {

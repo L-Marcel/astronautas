@@ -104,8 +104,20 @@ class Astronaut {
         /// @return Astronaut's age
         int getAge();
 
+        /// @return The astronaut's state: available, unavailable or dead
+        string getStateAsString();
+
+        /// @return True if astronaut is available, false otherwise
+        bool getAvailable();
+
         /// @brief Kill the astronaut
         void kill();
+
+        /// @brief Change astronaut state to unavailable
+        void sendToExpedition();
+
+        /// @brief Change astronaut state to available, if alive
+        void returnFromExpedition();
 
         /// @brief Print astronaut's data
         /// @param maxNameWidth Max lenght of an astronaut's name

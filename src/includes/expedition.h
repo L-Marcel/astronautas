@@ -58,6 +58,11 @@ class Expedition {
         /// @return Expedition's pointer or NULL
         static Expedition* list(List<Expedition>* database);
 
+        /// @brief Show the expedition's edit menu
+        /// @param database Expedition database
+        /// @param astronauts Astronaut database
+        void edit(List<Expedition>* database, List<Astronaut>* astronauts);
+
         /// @brief Print expedition's data
         /// @param maxCodeWidth Max lenght of an expedition's name
         void print(long long unsigned int maxCodeWidth);
