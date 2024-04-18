@@ -1,5 +1,5 @@
 #pragma once
-#include "astronaut.h"
+#include "astronaut.hpp"
 
 enum ExpeditionState {
     PLANNING = 2,
@@ -55,8 +55,10 @@ class Expedition {
 
         /// @brief Show the list of expeditions
         /// @param database Expedition database
+        /// @param title List's title
+        /// @param catchExpedition True if you want to return the selected expedition
         /// @return Expedition's pointer or NULL
-        static Expedition* list(List<Expedition>* database);
+        static Expedition* list(List<Expedition>* database, string title, bool catchExpedition = true);
 
         /// @brief Show the expedition's edit menu
         /// @param database Expedition database

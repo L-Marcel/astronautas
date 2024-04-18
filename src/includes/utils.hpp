@@ -37,6 +37,11 @@ string trim(string text);
 /// @return The string in lower case
 string lower(string text);
 
+/// @brief Pass string to upper case
+/// @param text The string
+/// @return The string in upper case
+string upper(string text);
+
 /// @brief Capitalize the string
 /// @param text The string
 /// @return The capitalized string
@@ -68,7 +73,14 @@ char getChar();
 /// @return Line's string
 string getLine();
 
-/// @brief Pause terminal and input a message
-/// @param text Terminal message
+/// @brief Return key pressed
 /// @return Pressed key
-char input(string text);
+char input();
+
+/// @brief Ask to continue
+/// @return Pressed key
+char askToContinue();
+
+/// @brief Input a number
+/// @return The number
+int getNumber();

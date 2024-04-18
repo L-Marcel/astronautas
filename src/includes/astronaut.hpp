@@ -1,5 +1,5 @@
 #pragma once
-#include "list.h"
+#include "list.hpp"
 
 enum Gener {
     MALE,
@@ -27,14 +27,14 @@ enum AstronautSearch {
 
 class Astronaut {
     private:
-
         bool alive = true;
-        unsigned int expeditions = 0;
         
         string name;
         string cpf;
         Gener gener;
         int age;
+
+        unsigned int expeditions = 0;
 
         /// @brief Get the max lenght of an astronaut's name
         /// @param database Astronaut database
@@ -54,7 +54,7 @@ class Astronaut {
             List<Astronaut>* database, string title, 
             AstronautFilter filter, AstronautSearch search = NONE,
             string searchParam = "", bool catchAstronaut = true,
-            List<Astronaut>* baseDatabase = NULL
+            List<Astronaut>* baseDatabase = nullptr
         );
     public:
         /// [LEMBRETE] Se lembrar de mover para privado depois
@@ -104,6 +104,9 @@ class Astronaut {
         /// @return Astronaut's age
         int getAge();
 
+        /// @return Astronaut's gener
+        Gener getGener();
+
         /// @return The astronaut's state: available, unavailable or dead
         string getStateAsString();
 
@@ -122,4 +125,7 @@ class Astronaut {
         /// @brief Print astronaut's data
         /// @param maxNameWidth Max lenght of an astronaut's name
         void print(long long unsigned int maxNameWidth);
+
+        /// @brief Show astronaut's page
+        void page();
 };

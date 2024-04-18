@@ -1,4 +1,4 @@
-#include "includes/utils.h"
+#include "includes/utils.hpp"
 
 string trim(string text) {
     long long unsigned int begin = 0;
@@ -19,6 +19,14 @@ string trim(string text) {
 string lower(string text) {
     for(unsigned int i = 0; i < text.length(); i++) {
         text[i] = tolower(text[i]);
+    };
+
+    return text;
+};
+
+string upper(string text) {
+    for(unsigned int i = 0; i < text.length(); i++) {
+        text[i] = toupper(text[i]);
     };
 
     return text;
@@ -119,9 +127,7 @@ int linux_getch(){
 };
 #endif
 
-char input(string text) {
-    cout << text;
-
+char input() {
     #ifdef _WIN32
         while(true) {
             if(kbhit()) return getch();
@@ -134,6 +140,13 @@ char input(string text) {
             };
         };
     #endif
+};
+
+char askToContinue() {
+    cout << endl << "Pressione ENTER para continuar" << endl;
+    cout << "Ou BACKSPACE para cancelar..." << endl;
+
+    return input();
 };
 
 char getChar() {
@@ -154,4 +167,19 @@ string getLine() {
     };
 
     return result;
+};
+
+int getNumber() {
+    string text = getLine();
+
+    try {
+        int result = stoi(text);
+        return result;
+    } catch(const out_of_range& e) {
+        clearTerminal();
+        throw string("Valor muito grande!");
+    } catch(const invalid_argument& e) {
+        clearTerminal();
+        throw string("Valor inválido!");
+    };
 };

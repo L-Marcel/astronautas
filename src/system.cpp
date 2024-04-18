@@ -1,4 +1,4 @@
-#include "includes/system.h"
+#include "includes/system.hpp"
 
 System::System(List<Astronaut>* astronauts, List<Expedition>* expeditions) {
     this->astronauts = astronauts;
@@ -8,7 +8,8 @@ System::System(List<Astronaut>* astronauts, List<Expedition>* expeditions) {
 void System::menu() {
     char option = ' ';
 
-    Expedition* expedition = NULL;
+    Expedition* expedition = nullptr;
+    Astronaut* astronaut = nullptr;
     do {
         clearTerminal();
         cout << "ASTRONAUTAS / SISTEMA DE VOO" << endl << endl;
@@ -19,7 +20,7 @@ void System::menu() {
         cout << "[4] Listar astronautas falecidos (memorial)" << endl << endl;
         cout << "[BACKSPACE] Sair do sistema de voo" << endl << endl;
         
-        option = input("");
+        option = input();
 
         switch(option) {
             case '0':
@@ -29,23 +30,27 @@ void System::menu() {
                 Expedition::form(this->expeditions, this->astronauts);
                 break;
             case '2':
-                expedition = Expedition::list(this->expeditions);
-                if(expedition != NULL) expedition->edit(this->expeditions, this->astronauts);
-                expedition = NULL;
+                expedition = Expedition::list(this->expeditions, "VOOS CADASTRADOS NO SISTEMA");
+                if(expedition != nullptr) expedition->edit(this->expeditions, this->astronauts);
+                expedition = nullptr;
                 break;
             case '3':
-                Astronaut::list(
+                astronaut = Astronaut::list(
                     this->astronauts, 
                     "ASTRONAUTAS CADASTRADOS NO SISTEMA", 
-                    ALIVE, false
+                    ALIVE, true
                 );
+                if(astronaut != nullptr) astronautPage(astronaut, this->expeditions);
+                astronaut = nullptr;
                 break;
             case '4':
-                Astronaut::list(
+                astronaut = Astronaut::list(
                     this->astronauts, 
                     "MEMORIAL DOS ASTRONAUTAS", 
-                    DEAD, false
+                    DEAD, true
                 );
+                if(astronaut != nullptr) astronautPage(astronaut, this->expeditions);
+                astronaut = nullptr;
                 break;
             case BACKSPACE:
                 char confirm;
@@ -60,4 +65,89 @@ void System::menu() {
                 break;
         };
     } while(option != BACKSPACE);
+};
+
+void System::free() {
+    this->astronauts->free();
+    this->expeditions->free();
+};
+
+void System::astronautPage(Astronaut* astronaut, List<Expedition>* expeditions) {
+    List<Expedition> astronautExpeditions = expeditions->filter([astronaut](Expedition* expedition) {
+        return expedition->getAstronauts()->exists([astronaut](Astronaut* another) {
+            return another->getCpf() == astronaut->getCpf();
+        });
+    });
+
+    List<Expedition> finishedExpeditions = astronautExpeditions.filter([](Expedition* expedition) {
+        return expedition->getState() == SUCCESS || expedition->getState() == FAILURE;
+    });
+
+    List<Expedition> futureExpeditions = astronautExpeditions.filter([](Expedition* expedition) {
+        return expedition->getState() == PLANNING;
+    });
+
+    Expedition* inExpedition = astronautExpeditions.find([](Expedition* expedition) {
+        return expedition->getState() == HAPPENING;
+    });
+
+    char option;
+    string strongName = upper(astronaut->getName());
+
+    while(true) {
+        clearTerminal();
+        cout << "ASTRONAUTA " << strongName << endl << endl;
+        cout << "Cpf: " << astronaut->getCpf() << endl;
+        cout << "Idade: " << astronaut->getAge() << endl;
+        cout << "Genero: " << generToString(astronaut->getGener()) << endl;
+        cout << "Status: " << astronaut->getStateAsString() << endl << endl;
+        if(inExpedition != nullptr) {
+            cout << "Participando do " << finishedExpeditions.getAmount() + 1 << "° voo (" << codeToString(inExpedition->getCode()) << ")";
+            unsigned int friends = inExpedition->getAstronauts()->getAmount() - 1;
+
+            if(friends > 1) cout << " com \noutros " << friends << " astronautas" << endl << endl;
+            else if(friends == 1) cout << " com \noutro atronauta" << endl << endl;
+            else cout << " e sozinh" << (
+                astronaut->getGener() == MALE? "o": 
+                (astronaut->getGener() == FEMALE? "a":"x")
+            ) << endl << endl;
+        };
+
+        cout << "[0] Listar voos finalizadas (total: " << finishedExpeditions.getAmount() << ")" << endl;
+        cout << "[1] Listar voos em planejamento (total: " << futureExpeditions.getAmount() << ")" << endl;
+        
+        cout << endl << "[BACKSPACE] Voltar para menu" << endl << endl;
+        option = input();
+
+        switch(option) {
+            case '0':
+                Expedition::list(&finishedExpeditions, "VOOS FINALIZADOS DE " + strongName, false);
+                break;
+            case '1':
+                Expedition::list(&futureExpeditions, "VOOS PLANEJADOS DE " + strongName, false);
+                break;
+            case BACKSPACE: 
+                finishedExpeditions.clear();
+                futureExpeditions.clear();
+                astronautExpeditions.clear();
+                return;
+            default: 
+                break;
+        };
+    };
+};
+
+void System::seed() {
+    /// Warning: part of this function is AI-generated content!
+
+    this->astronauts->add(new Astronaut("Neil Armstrong", "123.456.789-00", MALE, 20));
+    this->astronauts->add(new Astronaut("Buzz Aldrin", "123.456.789-01", OTHER, 21));
+    this->astronauts->add(new Astronaut("Michael Collins", "156.456.789-00", MALE, 35));
+    this->astronauts->add(new Astronaut("Louis Gagarin", "987.456.789-02", FEMALE, 24));
+    this->astronauts->add(new Astronaut("Fake Marcel", "897.456.635-04", MALE, 21));
+    this->astronauts->add(new Astronaut("Another Marcel", "416.456.635-04", MALE, 21));
+    this->astronauts->add(new Astronaut("Marcelo Francis", "741.456.635-04", OTHER, 18));
+    this->astronauts->add(new Astronaut("Marcela Francis", "289.456.635-04", FEMALE, 18));
+    this->astronauts->add(new Astronaut("Everything", "000.000.000-00", OTHER, 80));
+    this->astronauts->add(new Astronaut("Nothing", "000.000.000-01", OTHER, 18));
 };
