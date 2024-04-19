@@ -73,21 +73,21 @@ void System::free() {
 };
 
 void System::astronautPage(Astronaut* astronaut, List<Expedition>* expeditions) {
-    List<Expedition> astronautExpeditions = expeditions->filter([astronaut](Expedition* expedition) {
+    List<Expedition>* astronautExpeditions = expeditions->filter([astronaut](Expedition* expedition) {
         return expedition->getAstronauts()->exists([astronaut](Astronaut* another) {
             return another->getCpf() == astronaut->getCpf();
         });
     });
 
-    List<Expedition> finishedExpeditions = astronautExpeditions.filter([](Expedition* expedition) {
+    List<Expedition>* finishedExpeditions = astronautExpeditions->filter([](Expedition* expedition) {
         return expedition->getState() == SUCCESS || expedition->getState() == FAILURE;
     });
 
-    List<Expedition> futureExpeditions = astronautExpeditions.filter([](Expedition* expedition) {
+    List<Expedition>* futureExpeditions = astronautExpeditions->filter([](Expedition* expedition) {
         return expedition->getState() == PLANNING;
     });
 
-    Expedition* inExpedition = astronautExpeditions.find([](Expedition* expedition) {
+    Expedition* inExpedition = astronautExpeditions->find([](Expedition* expedition) {
         return expedition->getState() == HAPPENING;
     });
 
@@ -102,7 +102,7 @@ void System::astronautPage(Astronaut* astronaut, List<Expedition>* expeditions) 
         cout << "Genero: " << generToString(astronaut->getGener()) << endl;
         cout << "Status: " << astronaut->getStateAsString() << endl << endl;
         if(inExpedition != nullptr) {
-            cout << "Participando do " << finishedExpeditions.getAmount() + 1 << "° voo (" << codeToString(inExpedition->getCode()) << ")";
+            cout << "Participando do " << finishedExpeditions->getAmount() + 1 << "° voo (" << codeToString(inExpedition->getCode()) << ")";
             unsigned int friends = inExpedition->getAstronauts()->getAmount() - 1;
 
             if(friends > 1) cout << " com \noutros " << friends << " astronautas" << endl << endl;
@@ -113,23 +113,23 @@ void System::astronautPage(Astronaut* astronaut, List<Expedition>* expeditions) 
             ) << endl << endl;
         };
 
-        cout << "[0] Listar voos finalizadas (total: " << finishedExpeditions.getAmount() << ")" << endl;
-        cout << "[1] Listar voos em planejamento (total: " << futureExpeditions.getAmount() << ")" << endl;
+        cout << "[0] Listar voos finalizadas (total: " << finishedExpeditions->getAmount() << ")" << endl;
+        cout << "[1] Listar voos em planejamento (total: " << futureExpeditions->getAmount() << ")" << endl;
         
         cout << endl << "[BACKSPACE] Voltar para menu" << endl << endl;
         option = input();
 
         switch(option) {
             case '0':
-                Expedition::list(&finishedExpeditions, "VOOS FINALIZADOS DE " + strongName, false);
+                Expedition::list(finishedExpeditions, "VOOS FINALIZADOS DE " + strongName, false);
                 break;
             case '1':
-                Expedition::list(&futureExpeditions, "VOOS PLANEJADOS DE " + strongName, false);
+                Expedition::list(futureExpeditions, "VOOS PLANEJADOS DE " + strongName, false);
                 break;
             case BACKSPACE: 
-                finishedExpeditions.clear();
-                futureExpeditions.clear();
-                astronautExpeditions.clear();
+                List<Expedition>::destroy(finishedExpeditions);
+                List<Expedition>::destroy(futureExpeditions);
+                List<Expedition>::destroy(astronautExpeditions);
                 return;
             default: 
                 break;

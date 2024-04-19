@@ -1,44 +1,15 @@
-==60978== Memcheck, a memory error detector
-==60978== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==60978== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
-==60978== Command: ./main seeded
-==60978== Parent PID: 60977
-==60978== 
-==60978== 
-==60978== HEAP SUMMARY:
-==60978==     in use at exit: 48 bytes in 4 blocks
-==60978==   total heap usage: 2,255 allocs, 2,251 frees, 104,661 bytes allocated
-==60978== 
-==60978== 0 bytes in 1 blocks are definitely lost in loss record 1 of 3
-==60978==    at 0x48485C3: operator new[](unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==60978==    by 0x10E2C7: List<Expedition>::List() (list.hpp:67)
-==60978==    by 0x111C83: List<Expedition>::filter(std::function<bool (Expedition*)>) (list.hpp:88)
-==60978==    by 0x10ED98: System::astronautPage(Astronaut*, List<Expedition>*) (system.cpp:76)
-==60978==    by 0x10E91A: System::menu() (system.cpp:43)
-==60978==    by 0x10E014: main (main.cpp:13)
-==60978== 
-==60978== 8 bytes in 1 blocks are definitely lost in loss record 2 of 3
-==60978==    at 0x48485C3: operator new[](unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==60978==    by 0x11210F: List<Expedition>::add(Expedition*) (list.hpp:72)
-==60978==    by 0x111CCF: List<Expedition>::filter(std::function<bool (Expedition*)>) (list.hpp:93)
-==60978==    by 0x10ED98: System::astronautPage(Astronaut*, List<Expedition>*) (system.cpp:76)
-==60978==    by 0x10E9A3: System::menu() (system.cpp:52)
-==60978==    by 0x10E014: main (main.cpp:13)
-==60978== 
-==60978== 40 bytes in 2 blocks are definitely lost in loss record 3 of 3
-==60978==    at 0x48485C3: operator new[](unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==60978==    by 0x111F31: List<Astronaut>::add(Astronaut*) (list.hpp:72)
-==60978==    by 0x1123AA: Expedition::addAstronaut(Astronaut*) (expedition.cpp:12)
-==60978==    by 0x113651: Expedition::edit(List<Expedition>*, List<Astronaut>*) (expedition.cpp:205)
-==60978==    by 0x10E891: System::menu() (system.cpp:34)
-==60978==    by 0x10E014: main (main.cpp:13)
-==60978== 
-==60978== LEAK SUMMARY:
-==60978==    definitely lost: 48 bytes in 4 blocks
-==60978==    indirectly lost: 0 bytes in 0 blocks
-==60978==      possibly lost: 0 bytes in 0 blocks
-==60978==    still reachable: 0 bytes in 0 blocks
-==60978==         suppressed: 0 bytes in 0 blocks
-==60978== 
-==60978== For lists of detected and suppressed errors, rerun with: -s
-==60978== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==92751== Memcheck, a memory error detector
+==92751== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==92751== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==92751== Command: ./main seeded
+==92751== Parent PID: 92750
+==92751== 
+==92751== 
+==92751== HEAP SUMMARY:
+==92751==     in use at exit: 0 bytes in 0 blocks
+==92751==   total heap usage: 150 allocs, 150 frees, 81,248 bytes allocated
+==92751== 
+==92751== All heap blocks were freed -- no leaks are possible
+==92751== 
+==92751== For lists of detected and suppressed errors, rerun with: -s
+==92751== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

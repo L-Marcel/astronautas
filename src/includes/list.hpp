@@ -20,8 +20,8 @@ class List {
 
         /// @brief Filter the list
         /// @param condition The filter condition function
-        /// @return A new list, but filtered
-        List<T> filter(function<bool(T *)> condition);
+        /// @return A new allocated list, but filtered
+        List<T>* filter(function<bool(T *)> condition);
 
         /// @brief Gets an item by index
         /// @param index Item's index
@@ -58,25 +58,27 @@ class List {
         /// @brief Free all allocated memories
         void free();
 
-        /// @brief Free the list allocation
+        /// @brief Free the list allocation, not items
         void clear();
+
+        /// @brief Safe destructor, keep items allocated
+        static void destroy(List<T>* list);
 };
 
 template <typename T> List<T>::List() {
     this->qtd = 0;
-    this->items = new T*[0];
+    this->items = nullptr;
 };
 
 template <typename T> void List<T>::add(T* item) {
     this->qtd++;
-    T** items = new T*[qtd];
-    for(unsigned i = 0; i < qtd - 1; i++) {
+    T** items = new T*[this->qtd];
+    for(unsigned i = 0; i < this->qtd - 1; i++) {
         items[i] = this->items[i];
     };
 
     delete[] this->items;
     items[this->qtd - 1] = item;
-
     this->items = items;
 };
 
@@ -84,13 +86,13 @@ template <typename T> void List<T>::sort(function<bool(T*, T*)> compare) {
     std::sort(this->items, this->items + this->qtd, compare);
 };
 
-template <typename T> List<T> List<T>::filter(function<bool(T*)> condition) {
-    List<T> filteredList;
+template <typename T> List<T>* List<T>::filter(function<bool(T*)> condition) {
+    List<T>* filteredList = new List<T>();
 
     for(unsigned int i = 0; i < this->qtd; i++) {
         T* item = this->items[i];
 
-        if(condition(item)) filteredList.add(item);
+        if(condition(item)) filteredList->add(item);
     };
 
     return filteredList;
@@ -101,7 +103,7 @@ template <typename T> unsigned int List<T>::getIndex(T* item) {
         if(this->items[i] == item) return i;
     }; 
 
-    throw (-1);
+    throw string("Item not found");
 };
 
 template <typename T> T* List<T>::get(unsigned int index) {
@@ -113,6 +115,11 @@ template <typename T> void List<T>::remove(unsigned int index) {
     if(index > this->qtd - 1) return;
     
     this->qtd--;
+    // if(this->qtd == 0) {
+    //     delete[] this->items;
+    //     return;
+    // };
+
     T** items = new T*[this->qtd];
     
     if(this->qtd > 0) {
@@ -164,7 +171,7 @@ template <typename T> bool List<T>::all(function<bool(T*)> check) {
 template <typename T> void List<T>::clear() {
     this->qtd = 0;
     if(this->items != nullptr) {
-        delete[] this->items;
+        if(this->items != nullptr) delete[] this->items;
         this->items = nullptr;
     };
 };
@@ -178,4 +185,9 @@ template <typename T> void List<T>::free() {
     };
 
     this->clear();
+};
+
+template <typename T> void List<T>::destroy(List<T>* list) {
+    delete[] list->items;
+    delete list;
 };

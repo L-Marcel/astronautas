@@ -62,6 +62,7 @@ class Astronaut {
 
         Astronaut();
         Astronaut(string name, string cpf, Gener gener, int age);
+        ~Astronaut();
 
         /// @brief Compare two astronauts
         /// @param a First astronaut

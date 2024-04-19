@@ -8,6 +8,10 @@ Expedition::Expedition(
     this->code = code;
 };
 
+Expedition::~Expedition() {
+   this->astronauts.clear();
+};
+
 void Expedition::addAstronaut(Astronaut* astronaut) {
     this->astronauts.add(astronaut);
     this->astronauts.sort(Astronaut::compare);
@@ -17,7 +21,10 @@ void Expedition::removeAstronaut(Astronaut* astronaut) {
     try {
         unsigned int index = this->astronauts.getIndex(astronaut);
         this->astronauts.remove(index);
-    } catch(int err) {};
+    } catch(string err) {
+        cout << err << endl << endl;
+        cout << "Aperte ENTER para continuar..." << endl << endl;
+    };
 };
 
 long long unsigned int Expedition::getMaxCodeWidth(List<Expedition>* database) {
@@ -169,8 +176,7 @@ void Expedition::edit(
     Astronaut* astronaut = nullptr;
     
     this->astronauts.sort(Astronaut::compare);
-    List<Astronaut> astronautCanBeAdded;
-    astronautCanBeAdded.clear();
+    List<Astronaut>* astronautCanBeAdded;
 
     switch(this->getState()) {
         case PLANNING:
@@ -201,10 +207,10 @@ void Expedition::edit(
                             }
                         );
 
-                        astronaut = Astronaut::list(&astronautCanBeAdded, "ADICIONANDO ASTRONAUTA AO VOO " + codeToString(this->code), ALIVE, true);
+                        astronaut = Astronaut::list(astronautCanBeAdded, "ADICIONANDO ASTRONAUTA AO VOO " + codeToString(this->code), ALIVE, true);
                         if(astronaut != nullptr) this->addAstronaut(astronaut);
                         astronaut = nullptr;
-                        astronautCanBeAdded.clear();
+                        List<Astronaut>::destroy(astronautCanBeAdded);
                         break;
                     case '1':
                         Astronaut::list(&this->astronauts, "ASTRONAUTAS DO VOO " + codeToString(code), ALL, false);
@@ -236,13 +242,12 @@ void Expedition::edit(
 
                                 astronauts->sort(Astronaut::compare);
                                 database->sort(Expedition::compare);
-                                astronautCanBeAdded.clear();
+                        
                                 return;
                             };
                         };
                         break;
                     case BACKSPACE:
-                        astronautCanBeAdded.clear();
                         return;
                     default:
                         break;

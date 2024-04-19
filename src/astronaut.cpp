@@ -15,6 +15,7 @@ Astronaut::Astronaut(string name, string cpf, Gener gener, int age) {
     this->gener = gener;
     this->age = age;
 };
+Astronaut::~Astronaut() {};
 
 long long unsigned int Astronaut::getMaxNameWidth(List<Astronaut>* database) {
     long long unsigned int maxNameWidth = 4;
@@ -191,6 +192,8 @@ unsigned int Astronaut::countDeaths(List<Astronaut>* database) {
     for(unsigned int i = database->getAmount() - 1; i >= 0; i--) {
         if(database->get(i)->alive) break;
         deaths++;
+        
+        if(i == 0) break;
     };
 
     return deaths;
@@ -290,12 +293,12 @@ Astronaut* Astronaut::search(
         char key = input();
 
         if(key == BACKSPACE) {
-            if(search != NONE) database->clear();
+            if(search != NONE) List<Astronaut>::destroy(database);
             return nullptr;
         } else if(key >= '0' && key < '0' + int(end - start) && catchAstronaut) {
             unsigned int index = (key - '0') + (page * perPage) + alivesGap;
             Astronaut* selected = database->get(index);
-            if(search != NONE) database->clear();
+            if(search != NONE) List<Astronaut>::destroy(database);
             return selected;
         } else if(key == SPECIAL_KEY) {
             #ifdef _WIN32
@@ -317,11 +320,11 @@ Astronaut* Astronaut::search(
             } while(nameToSearch == "");
 
             string lowerNameToSearch = lower(nameToSearch);
-            List<Astronaut> filteredAstronaut = database->filter([&lowerNameToSearch](Astronaut* astronaut){
+            List<Astronaut>* filteredAstronaut = database->filter([&lowerNameToSearch](Astronaut* astronaut){
                 return lower(astronaut->getName()).find(lowerNameToSearch) != string::npos;
             });
 
-            return Astronaut::search(&filteredAstronaut, title, filter, NAME, nameToSearch, catchAstronaut, baseDatabase);
+            return Astronaut::search(filteredAstronaut, title, filter, NAME, nameToSearch, catchAstronaut, baseDatabase);
         } else if(key == 'c' && search == NONE) {
             string cpfToSearch = "";
 
@@ -333,11 +336,11 @@ Astronaut* Astronaut::search(
                 cpfToSearch = toCpf(getLine());
             } while(cpfToSearch == "");
 
-            List<Astronaut> filteredAstronaut = database->filter([&cpfToSearch](Astronaut* astronaut){
+            List<Astronaut>* filteredAstronaut = database->filter([&cpfToSearch](Astronaut* astronaut){
                 return astronaut->getCpf().find(cpfToSearch) != string::npos;
             });
 
-            return Astronaut::search(&filteredAstronaut, title, filter, CPF, cpfToSearch, catchAstronaut, baseDatabase);
+            return Astronaut::search(filteredAstronaut, title, filter, CPF, cpfToSearch, catchAstronaut, baseDatabase);
         } else if(key == 'i' && search == NONE) {
             char method;
             do {
@@ -405,7 +408,7 @@ Astronaut* Astronaut::search(
                 break;
             };
 
-            List<Astronaut> filteredAstronaut = database->filter([&method, &ageToSearch](Astronaut* astronaut){
+            List<Astronaut>* filteredAstronaut = database->filter([&method, &ageToSearch](Astronaut* astronaut){
                 switch(method) {
                     case '0': return astronaut->getAge() > ageToSearch;
                     case '1': return astronaut->getAge() < ageToSearch;
@@ -417,9 +420,9 @@ Astronaut* Astronaut::search(
                 };
             });
 
-            return Astronaut::search(&filteredAstronaut, title, filter, AGE, ageText, catchAstronaut, baseDatabase);
+            return Astronaut::search(filteredAstronaut, title, filter, AGE, ageText, catchAstronaut, baseDatabase);
         } else if(key == ENTER && search != NONE && baseDatabase != nullptr) {
-            database->clear();
+            List<Astronaut>::destroy(database);
             return Astronaut::search(baseDatabase, title, filter, NONE, "", catchAstronaut, baseDatabase);
         };
     } while(true);

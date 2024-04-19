@@ -29,6 +29,7 @@ class Expedition {
     public:
         Expedition();
         Expedition(ExpeditionState state, int code);
+        ~Expedition();
 
         /// @brief Initializes a form to create an expedition
         /// @param database Expedition database
