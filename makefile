@@ -17,7 +17,7 @@ else
 endif
 
 valgrind: compile
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.txt ${EXEC} && ${CLEAR}
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ${EXEC} && ${CLEAR}
 run:
 	${EXEC} && ${CLEAR}
 dev: compile
